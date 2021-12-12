@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>DailyMoney</title>
+    <!-- Mobile viewport optimization h5bp.com/ad -->
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <!-- <meta name="viewport" content="width=device-width"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- iOS web app, delete if not needed. https://github.com/h5bp/mobile-boilerplate/issues/94 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="theme-color" content="#ffffff">
+    
+    <script>
+        // The script prevents links from opening in mobile safari. https://gist.github.com/1042026
+        (function (a, b, c) { if (c in b && b[c]) { var d, e = a.location, f = /^(a|html)$/i; a.addEventListener("click", function (a) { d = a.target; while (!f.test(d.nodeName)) d = d.parentNode; "href" in d && (d.href.indexOf("http") || ~d.href.indexOf(e.host)) && (a.preventDefault(), e.href = d.href) }, !1) } })(document, window.navigator, "standalone")
+    </script>
+    <script>
+        // Storage lib
+        window.storage = (() => { var n = "localStorage" in window && !!window.localStorage; return { set: function (t, e) { return n ? (e = e instanceof String ? e : JSON.stringify(e), window.localStorage.setItem(t, e)) : null }, get: function (t) { if (n) { var e = window.localStorage.getItem(t); try { return JSON.parse(e) } catch (t) { return e } } return null }, remove: function (t) { n && window.localStorage.removeItem(t) }, clear: function () { n && window.localStorage.clear() } } })();
+    </script>
+    <!-- Mobile IE allows us to activate ClearType technology for smoothing fonts for easy reading -->
+    <meta http-equiv="cleartype" content="on">
+    <!-- Application styles. -->
+    <style type="text/css">
+        :root {
+    /* --global-bgcolor: #E5DEE0; */
+    --global-bgcolor: #E2E2E2;
+    --default-fontcolor: #2F3437;
+    --lighter-fontcolor: #a3a2a2;
+    --default-padding: 1rem;
+    --rounded-fontfamily: ArialRoundedMTBold, sans-serif;
+    --default-fontfamily: Cochin, -apple-system, BlinkMacSystemFont, sans-serif;
+    
+    --rounded: 1.1rem;
+    --ui-red: #FF5D4D;
+    --ui-green: #46C35B;
+    --ui-blue: #5EB0D7;
+    --outline-test: 1px solid red;
+}
+
+html { font-size: 16px; }
+*, *::after, *::before { box-sizing: border-box; }
+body {
+    font-family: var(--default-fontfamily);
+    height: 100%;
+    color: var(--default-fontcolor);
+    position: relative;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    background-color: var(--global-bgcolor);
+}
+
+main {
+    min-height: 100vh;
+    padding: var(--default-padding);
+    position: relative;
+    padding-top: 0;
+}
+.hide { display: none !important; }
+
+h1, h2, h3 {
+    font-family: var(--default-fontfamily);
+}
+
+blockquote {
+    display: block;
+    font-size: 1.2rem;
+    font-style: italic;
+    text-align: center;
+    transition: transform 1s ease-out, opacity .5s linear;
+    opacity: 0;
+    transform: scale(.5);
+}
+
+blockquote.show {
+    opacity: 1;
+    transform: translateY(-50px) scale(1);
+}
+
+.blur {
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(10px);
+}
+
+.sml-shadow {
+    box-shadow: 2px 3px 6px 0px rgba(71, 71, 71, 0.5);
+}
+
+.no-show {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.no-select {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    user-select: none;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.page {
+    /* outline: 1px solid yellow; */
+    padding: 0;
+    margin: 0;
+    /* margin-top: 3rem;
+    padding-top: 2rem; */
+    transition: opacity .4s ease;
+    opacity: 1;
+    height: 100vh;
+}
+
+.page--hide {
+    opacity: 0 !important;
+    transform: scale(0);
+    position: fixed;
+    top: -9999px;
+}
+
+
+.input-sec {
+    padding: var(--default-padding);
+    /* outline: var(--outline-test) */
+    transition: transform .3s ease-out, opacity .3s ease-out;
+    opacity: 1;
+}
+
+.input-sec__totals-con,
+.tally-sec__totals-con  {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    font-size: 1.3rem;
+}
+
+.tally-sec__totals-con {
+    margin-top: calc(var(--default-padding) + 1rem);
+}
+
+.input-sec__income-total,
+.input-sec__expense-total,
+.tally-sec__income-total,
+.tally-sec__expense-total {
+    padding: .3rem;
+}
+
+.input-sec__income-total,
+.tally-sec__income-total {
+    border-right: 1px solid var(--lighter-fontcolor);
+    text-align: right;
+    color: var(--ui-green);
+}
+.input-sec__expense-total,
+.tally-sec__expense-total {
+    color: var(--ui-red);
+}
+
+#input-sec__input {
+    display: block;
+    text-align: center;
+    padding: var(--default-padding);
+    font-size: 5rem;
+    background-color: transparent;
+    border: 0;
+    outline: none;
+    width: 100%;
+    font-family: var(--default-fontfamily);
+    color: var(--default-fontcolor);
+}
+
+.input-sec__button-con {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.input-sec__button-con button {
+    font-family: var(--default-fontfamily);
+    padding: .5rem;
+    font-size: 1.5rem;
+    border-radius: 5px;
+}
+.input-sec__button-con button b {
+    font-weight: normal;
+    position: relative;
+    top: -4px;
+}
+#income-button {
+    border: 1px solid var(--ui-green);
+    color: var(--ui-green);
+    background-color: #CAF6D1;
+}
+#expense-button {
+    border: 1px solid var(--ui-red);
+    color: var(--ui-red);
+    background-color: #FFD1CD;
+}
+
+/* ========= */
+
+.tally-sec {
+    margin-top: var(--default-padding);
+    padding: var(--default-padding);
+    transition: transform .3s ease-out;
+}
+
+
+.tally-sec__con {
+    border: 1px solid var(--lighter-fontcolor);
+    border-radius: calc(var(--rounded) / 2);
+    position: relative;
+    --label-size: 1.2rem;
+    margin-top: 2rem;
+    min-height: 5rem;
+    background-color: var(--global-bgcolor);
+    transition: transform .3s ease-in;
+}
+
+.tally-sec__con--prev-dates {
+    transform: scale(.9);
+}
+
+.tally-sec label {
+    position: absolute;
+    top: -12px;
+    left: 23px;
+    display: inline-block;
+    padding: 0 .5rem;
+    background: var(--global-bgcolor);
+    font-weight: 800;
+    font-size: var(--label-size);
+}
+.tally-sec__delete-button {
+    background: transparent;
+    border: 0;
+    display: block;
+    color: var(--ui-red);
+    width: 100%;
+    padding: var(--default-padding);
+    /* padding-top: calc(var(--default-padding) / 5); */
+    padding-top: 0;
+    font-family: var(--default-fontfamily);
+    font-size: var(--label-size);
+}
+
+.tally-sec__item-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: .4rem;
+}
+
+.tally-sec__con--today .tally-sec__item-list {
+    padding-top: var(--default-padding);
+}
+
+.tally-sec__item-list li {
+    --item-list-font-size: 1.1rem;
+    padding: calc(var(--default-padding) / 3);
+    font-size: var(--item-list-font-size);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: .5rem;
+}
+
+.tally-sec__item-list li time {
+    opacity: 0.8;
+}
+.tally-sec__item-list li i {
+    font-style: normal;
+}
+
+.tally-sec__delete-item-button {
+    background: transparent;
+    border:0;
+    position: relative;
+    top: -4px;
+    font-size: var(--item-list-font-size);
+
+}
+
+
+
+.dialog {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    /* background-color: rgba(43, 43, 43, 0.5); */
+    background-color: rgba(36, 31, 31, 0.5);
+    z-index: 9999;
+    border-radius: var(--rounded);
+}
+
+.dialog-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 100vh;
+    background-color: rgba(31, 29, 29, 0.5);
+    /* opacity: 0.5; */
+    z-index: 888;
+}
+
+#confirm-dialog {
+    bottom: 2rem;
+    padding: 0;
+}
+#confirm-dialog button {
+    display: block;
+    width: 100%;
+    padding: var(--default-padding);
+    border: 0;
+    background-color: transparent;
+    font-size: 1.2rem;
+}
+.confirm-dialog__action {
+    color: var(--ui-red);
+    border-bottom: 1px solid var(--dark-fontcolor) !important;
+}
+.confirm-dialog__cancel {
+    color: var(--ui-blue);
+}
+
+.is-expense {
+    color: var(--ui-red);
+}
+
+.is-expense::before {
+    content: '-';
+}
+
+.is-income {
+    color: var(--ui-green);
+}
+
+#hooray-empty {
+    text-align: center;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    /* outline: var(--outline-test); */
+}
+
+#hooray-empty span {
+    font-size: 3rem;
+    opacity: 0.3;
+}
+
+dm-tally {
+    display: block;
+    height: 59vh;
+    /* outline: 1px solid red; */
+    overflow-y: scroll;
+}
+
+    </style>
+</head>
+
+<body class="no-select">
+    <div class="hide" id="relaunch-label" style="color:#333;padding:2rem;text-align:center;font-size:2rem;">Please re-launch the app.</div>
+    <main>
+        <!-- Confirm dialog -->
+        <cf-confirm-dialog></cf-confirm-dialog>
+
+        <dm-main-input></dm-main-input>
+        <dm-tally></dm-tally>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            ;window.onerror = (e) => {
+    console.log(e);
+};
+
+const TODAY = new Date();
+const TODAY_KEY = formatDate(TODAY.getTime());
+
+const IS_SCRIPTABLE = "<<SCRIPTABLE>>" === 'scriptable';
+let APP_DATA = (IS_SCRIPTABLE) ? "<<APP_DATA>>" : {
+    'days': {}
+};
+
+// If not in Scriptable environment. On development mode.
+if (!window.completion) { 
+    window.completion = (str) => {
+        try {
+            localStorage.setItem('DM', str);
+        } catch (err) {}              
+    }; 
+    // try-catch needed because ios webview throws "insecure operation" error on
+    // localStorage.
+    try {
+        if (window?.localStorage.getItem('DM')) {
+            APP_DATA = JSON.parse(localStorage.getItem('DM'));
+        }
+    }
+    catch (err) {}
+}
+
+const saveData = (() => {
+    let debouncer = null;
+    return () => {
+        clearTimeout(debouncer);
+        debouncer = setTimeout(() => {
+            appData.sortDataByTime();
+            completion(JSON.stringify(APP_DATA));
+        }, 1e3);
+    };
+})();
+
+
+function pint(v) {
+    if (typeof v === 'string' && v.trim() === '') { return 0; }
+    return parseInt(v, 10);
+}
+function pfloat(v) {
+    if (typeof v === 'string' && v.trim() === '') { return 0; }
+    let num = parseFloat(v);
+    if (num < 0) { return 0; }
+    return parseFloat(num.toFixed(2));
+}
+function byId(id) {
+    return document.getElementById(id);
+}
+function formatNumber(num) {
+    num = parseFloat(num);
+    // See: https://blog.abelotech.com/posts/number-currency-formatting-javascript/
+    return num.toFixed(2).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+}
+function triggerEvent(parent, eventName, data = null) {
+    parent.dispatchEvent(new CustomEvent(eventName, {
+        detail: data
+    }));
+}
+function formatDate(timestamp) {
+    const d = new Date(timestamp);
+    let date = d.getDate();
+    let year = d.getFullYear();
+    let month = d.getMonth() + 1;
+    if (date < 10) {
+        date = '0' + date;
+    }
+    if (month < 10) {
+        month = '0' + month;
+    }
+    return `${year}-${month}-${date}`;
+}
+
+function formatTime(timestamp) {
+    const d = new Date(timestamp);
+    let hr = d.getHours();
+    let meridiem = 'AM';
+    if (hr >= 12) { meridiem = 'PM'; }
+    if (hr > 12) { hr = hr - 12; }  
+    let min = d.getMinutes();
+    if (min < 10) {
+        min = '0' + min;
+    }
+    if (hr < 10) {
+        hr = '0' + hr;
+    }
+    return `${hr}:${min} ${meridiem}`;
+}
+
+function toClipboard(text) {
+    let input = document.createElement("textarea");
+    input.style.opacity = "0";
+    input.style.position = "fixed";
+    input.value = text;
+    document.body.appendChild(input);
+    input.focus();
+    input.setSelectionRange(0, input.value.length);
+    document.execCommand("Copy");
+    input.remove();
+};;
+class CfConfirmDialog extends HTMLElement {
+    constructor() {
+        super();
+    }
+
+    connectedCallback() {
+        this.render();
+        this.$backDrop = this.querySelector('.dialog-backdrop');
+        this.$dialog = byId('confirm-dialog');
+        this.events();
+    }
+
+    hide() {
+        this.$backDrop.classList.add('hide');
+        this.$dialog.classList.add('hide');
+    }
+
+    show() {
+        this.$backDrop.classList.remove('hide');
+        this.$dialog.classList.remove('hide');
+    }
+
+    confirmed() {
+        triggerEvent(this, 'confirm');
+    }
+
+    onButtonClicked(e) {
+        e.preventDefault();
+        const $me = e.target;
+        if ($me?.classList.contains('confirm-dialog__action')) {
+            e.stopPropagation();
+            this.confirmed();
+            this.hide();
+        }
+        else if ($me?.classList.contains('confirm-dialog__cancel')) {
+            e.stopPropagation();
+            this.hide();
+        }
+    }
+
+    onShow(e) {
+        let label = e?.detail?.label ?? 'Delete';
+        this.querySelector('button.confirm-dialog__action').textContent = label;
+        this.show();
+    }
+
+    onHide() {
+        this.hide();
+    }
+
+    events() {
+        this.addEventListener('click', this.onButtonClicked.bind(this));
+        this.addEventListener('show', this.onShow.bind(this));
+        this.$backDrop.addEventListener('click', this.onHide.bind(this));
+    }
+
+    render() {
+
+        this.innerHTML = /*html*/`
+            <div id="confirm-dialog" class="blur sml-shadow dialog hide">
+                <button class="confirm-dialog__action">Delete</button>
+                <button class="confirm-dialog__cancel">Cancel</button>
+            </div>
+            <div class="dialog-backdrop hide"></div>
+        `;
+    }
+
+    diconnectedCallback() {
+        this.removeEventListener('click', this.onButtonClicked.bind(this));
+        this.removeEventListener('show', this.onShow.bind(this));
+        this.$backDrop.removeEventListener('click', this.onHide.bind(this));
+    }
+}
+customElements.define('cf-confirm-dialog', CfConfirmDialog);
+
+function doConfirm(label = 'Delete', callback = null) {
+    callback = callback ?? (() => {});
+    const $confirmElement = document.querySelector('cf-confirm-dialog');
+    function confirm() {
+        callback();
+        $confirmElement?.removeEventListener('confirm', confirm);
+    }
+    $confirmElement?.removeEventListener('confirm', confirm);
+    triggerEvent($confirmElement, 'show', {
+        label
+    });
+    $confirmElement?.addEventListener('confirm', confirm);
+};
+
+class DmMainInput extends HTMLElement {
+    constructor() {
+        super();
+    }
+
+    connectedCallback() {
+        this.render();
+        this.$input = byId('input-sec__input');
+        this.$incomeButton = byId('income-button');
+        this.$expenseButton = byId('expense-button');
+        this.$totalIncomeCon = this.querySelector('.input-sec__income-total');
+        this.$totalExpenseCon = this.querySelector('.input-sec__expense-total');
+        requestAnimationFrame(() => {
+            this.$input.focus();
+            this.updateTotals();
+        });
+        this.events();
+    }
+
+    reset() {
+        this.$input.value = '';
+    }
+
+    getValue() {
+        let val = this.$input.value.trim();
+        val = pfloat(val);
+        if (isNaN(val)) { return 0; }
+        if (val < 0) { return 0; }
+        return val;
+    }
+
+    updateTotals() {
+        const { expenseTotal, incomeTotal } = appData.calculateTotalsForToday();
+        this.$totalIncomeCon.textContent = formatNumber(incomeTotal);
+        this.$totalExpenseCon.textContent = formatNumber(expenseTotal);
+        this.$totalIncomeCon.setAttribute('data-clipboarditem', incomeTotal);
+        this.$totalExpenseCon.setAttribute('data-clipboarditem', expenseTotal);
+    }
+
+    onExpense() {
+        let val = this.getValue();
+        if (val) {
+            appData.addItemForToday(val, 1);
+        }
+        this.updateTotals();
+        this.reset();
+        triggerEvent(this, 'itemsUpdated');
+    }
+
+    onIncome() {
+        let val = this.getValue();
+        if (val) {
+            appData.addItemForToday(val, 0);
+        }
+        this.updateTotals();
+        this.reset();
+        triggerEvent(this, 'itemsUpdated');
+    }
+
+    onTallyListDeletion() {
+        this.updateTotals();
+    }
+
+    onClipboradCopy(e) {
+        const $target = e.target;
+        if ($target.getAttribute('data-clipboarditem')) {
+            let copyItem = $target.getAttribute('data-clipboarditem');
+            toClipboard(copyItem);
+        }
+    }
+
+    onFocusCheck() {
+        if (TODAY_KEY !== formatDate((new Date()).getTime())) {
+            document.querySelector('main').classList.add('hide');
+            document.body.style.backgroundImage = 'none';
+            byId('relaunch-label').classList.remove('hide');
+        }
+    }
+
+    events() {
+        this.$incomeButton.addEventListener('click', this.onIncome.bind(this));
+        this.$expenseButton.addEventListener('click', this.onExpense.bind(this)); 
+        document.addEventListener('tallyTodayListDeletion', this.onTallyListDeletion.bind(this));
+        this.addEventListener('click', this.onClipboradCopy.bind(this));
+        this.$input.addEventListener('focus', this.onFocusCheck.bind(this));
+    }
+
+    render() {
+        this.innerHTML = /*html*/ `
+            <section class="input-sec">
+                <div class="input-sec__totals-con">
+                    <div class="input-sec__income-total">0.00</div>
+                    <div class="input-sec__expense-total">0.00</div>
+                </div>
+                <input type="number" inputmode="decimal" placeholder="0.00" id="input-sec__input">
+                <div class="input-sec__button-con">
+                    <button id="income-button"><b>+</b> Income</button>
+                    <button id="expense-button"><b>-</b> Expense</button>
+                </div>
+            </section>
+        `;
+    }
+
+    disconnectedCallback() {
+        this.$incomeButton.removeEventListener('click', this.onIncome.bind(this));
+        this.$expenseButton.removeEventListener('click', this.onExpense.bind(this));
+        document.removeEventListener('tallyTodayListDeletion', this.onTallyListDeletion.bind(this));
+        this.removeEventListener('click', this.onClipboradCopy.bind(this));
+        this.$input.removeEventListener('focus', this.onFocusCheck.bind(this));
+    }
+}
+
+customElements.define('dm-main-input', DmMainInput);;
+const daysArr = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+
+class DmTally extends HTMLElement {
+    constructor() {
+        super();
+        this.lastScrollPos = 0;
+    }
+
+    connectedCallback() {
+        this.render();
+        this.$mainInputComponent = document.querySelector('dm-main-input');
+        this.$todayList = byId('tally-sec__today-list');
+        this.$prevDaysCon = byId('tally-sec__prev-days-con');
+        this.$emptyTodayCon = byId('hooray-empty');
+        this.events();
+    }
+
+    refreshAllList() {
+        this.$todayList.innerHTML = this.buildTodayList();
+        this.$prevDaysCon.innerHTML = this.buildTallyLists();
+    }
+
+    onItemsUpdated() {
+        this.$todayList.innerHTML = this.buildTodayList();
+    }
+
+    onDelete(e) {
+        const $target = e.target;
+        if ($target?.classList.contains('tally-sec__delete-item-button')) {
+            doConfirm('Delete', () => {
+                const dateKey = $target.getAttribute('data-tally-date').trim();
+                const itemTimestamp = pint($target.getAttribute('data-item-timestamp'));
+                appData.deleteItem(dateKey, itemTimestamp);
+                this.refreshAllList();
+                triggerEvent(document, 'tallyTodayListDeletion');
+            });
+        }
+        if ($target?.classList.contains('tally-sec__delete-button')) {
+            const dateKey = $target.getAttribute('data-tally-date').trim();
+            doConfirm(`Delete ${dateKey} Items`, () => {
+                appData.deleteDate(dateKey);
+                // this.$prevDaysCon.innerHTML = this.buildTallyLists();
+                this.refreshAllList();
+            });
+        }
+    }
+
+    buildTodayList() {
+        let html = '';
+        let hasItems = false;
+        Object.keys(APP_DATA.days).forEach((key) => {
+            if (key === TODAY_KEY) {
+                hasItems = APP_DATA.days[key].length;
+                APP_DATA.days[key].map((item) => {
+                    html += /*html*/ `
+                    <li>
+                        <button class="tally-sec__delete-item-button" data-item-timestamp="${item.timestamp}" data-tally-date="${key}">🗑</button>
+                        <time>${formatTime(item.timestamp)}</time>
+                        <i class="${(item.isExpense) ? 'is-expense' : 'is-income'}">${formatNumber(item.value)}</i>
+                    </li>
+                    `;
+                });
+            }
+        });
+        requestAnimationFrame(() => {
+            this.$emptyTodayCon.classList[(hasItems) ? 'add' : 'remove']('hide');
+            this.$todayList.classList[(hasItems) ? 'remove' : 'add']('hide');
+        });
+        return html;
+    }
+
+    buildTallyLists() {
+        let html = '';
+        Object.keys(APP_DATA.days).forEach((key) => {
+            if (key !== TODAY_KEY) {
+                if (!APP_DATA.days[key].length) {
+                    // Delete empty days
+                    delete APP_DATA.days[key];
+                    return;
+                }
+                const { expenseTotal, incomeTotal } = appData.calculateTotalsForDate(key);
+                html += /*html*/ `
+                <div class="tally-sec__con tally-sec__con--prev-dates">
+                    <label>${daysArr[(new Date(key)).getDay()]}  ${key}</label> 
+                    <div class="tally-sec__totals-con">
+                        <div class="tally-sec__income-total">${formatNumber(incomeTotal)}</div>
+                        <div class="tally-sec__expense-total">${formatNumber(expenseTotal)}</div>
+                    </div>
+                    <ul class="tally-sec__item-list">
+                        ${(() => {
+                        let listHtml = '';
+                        APP_DATA.days[key].map((item) => {
+                            listHtml += /*html*/ `
+                                <li>
+                                    <button class="tally-sec__delete-item-button" data-item-timestamp="${item.timestamp}" data-tally-date="${key}">🗑</button>
+                                    <time>${formatTime(item.timestamp)}</time>
+                                    <i class="${(item.isExpense) ? 'is-expense' : 'is-income'}">${formatNumber(item.value)}</i>
+                                </li>
+                                `;
+                        });
+                        return listHtml;
+                    })()}
+                    </ul>
+                    <button class="tally-sec__delete-button" data-tally-date="${key}">Delete</button>
+                </div>
+                `;
+            }
+        });
+        return html;
+    }
+
+    events() {
+        this.$mainInputComponent.addEventListener('itemsUpdated', this.onItemsUpdated.bind(this));
+        this.addEventListener('click', this.onDelete.bind(this));
+    }
+
+    render() {
+        this.innerHTML = /*html*/ `
+        <section class="tally-sec">
+            <div class="tally-sec__con tally-sec__con--today">
+                <label>Today</label> 
+                <div id="hooray-empty"><span>🎉</span></div>
+                <ul id="tally-sec__today-list" class="tally-sec__item-list hide">
+                    ${this.buildTodayList()}
+                </ul>
+            </div>
+            <!-- ========= -->
+            <div id="tally-sec__prev-days-con"></div>          
+        </section>
+        `;
+        requestAnimationFrame(() => {
+            this.$prevDaysCon.innerHTML = this.buildTallyLists();
+        });
+    }
+
+    disconnectedCallback() {
+        this.$mainInputComponent.removeEventListener('itemsUpdated', this.onItemsUpdated.bind(this));
+        this.removeEventListener('click', this.onDelete.bind(this));
+    }
+}
+
+customElements.define('dm-tally', DmTally);;window.appData = {
+
+    makeTodayIfNotExists() {
+        if (!APP_DATA.days?.[TODAY_KEY]) {
+            APP_DATA.days[TODAY_KEY] = [];
+        }
+       
+    },
+
+    addItemForToday(value, isExpense = 1) {
+        appData.makeTodayIfNotExists();
+        APP_DATA.days[TODAY_KEY].push({
+            timestamp: (new Date()).getTime(),
+            value: pfloat(value),
+            isExpense
+        });
+        appData.sortDataByTime();
+        saveData();
+    },
+
+    calculateTotalsForToday() {
+        appData.makeTodayIfNotExists();
+        let incomeTotal = 0,
+            expenseTotal = 0;
+        APP_DATA.days[TODAY_KEY].map((item) => {
+            if (item.isExpense) {
+                expenseTotal += pfloat(item.value);
+            }
+            else {
+                incomeTotal += pfloat(item.value);
+            }
+        });   
+        return {expenseTotal, incomeTotal}; 
+    },
+
+    calculateTotalsForDate(dateKey) {
+        appData.makeTodayIfNotExists();
+        let incomeTotal = 0,
+            expenseTotal = 0;
+        APP_DATA.days[dateKey].map((item) => {
+            if (item.isExpense) {
+                expenseTotal += pfloat(item.value);
+            }
+            else {
+                incomeTotal += pfloat(item.value);
+            }
+        });   
+        return {expenseTotal, incomeTotal}; 
+    },
+
+    sortDataByTime() {
+        Object.keys(APP_DATA.days).forEach((key) => {
+            APP_DATA.days[key].sort((a, b) => {
+                if (a.timestamp < b.timestamp) {
+                    return 1;
+                }
+                if (a.timestamp > b.timestamp) {
+                    return -1;
+                }
+                return 0;
+            });
+        });
+        appData.sortDataByDate();
+    },
+
+    sortDataByDate() {
+        let copy = {};
+        let dates = Object.keys(APP_DATA.days);
+        dates.sort((a, b) => {
+            let aTimestamp = (new Date(a)).getTime();
+            let bTimestamp = (new Date(b)).getTime();
+            if (aTimestamp < bTimestamp) {
+                return 1;
+            }
+            if (aTimestamp > bTimestamp) {
+                return -1;
+            }
+            return 0;
+        });
+        dates.forEach((date) => {
+            copy[date] = (APP_DATA.days[date]);
+        });
+        //console.log(copy);
+        APP_DATA.days = copy;
+    },
+   
+    deleteItem(dateKey, itemTimestamp) {
+        if (APP_DATA.days?.[dateKey]) {
+            APP_DATA.days[dateKey] = APP_DATA.days[dateKey].filter((item) => {
+                return pint(item.timestamp) !== itemTimestamp;
+            });
+            appData.sortDataByTime();
+            saveData();
+        }
+    },
+
+    deleteDate(dateKey) {
+        if (APP_DATA.days?.[dateKey]) {
+            delete APP_DATA.days[dateKey];
+            appData.sortDataByTime();
+            saveData();
+        }
+    }
+
+};
+        });     
+    </script>
+</body>
+
+</html>
