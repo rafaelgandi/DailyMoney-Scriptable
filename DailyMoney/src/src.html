@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>DailyMoney</title>
+    <!-- Mobile viewport optimization h5bp.com/ad -->
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <!-- <meta name="viewport" content="width=device-width"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- iOS web app, delete if not needed. https://github.com/h5bp/mobile-boilerplate/issues/94 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="theme-color" content="#ffffff">
+    
+    <script>
+        // The script prevents links from opening in mobile safari. https://gist.github.com/1042026
+        (function (a, b, c) { if (c in b && b[c]) { var d, e = a.location, f = /^(a|html)$/i; a.addEventListener("click", function (a) { d = a.target; while (!f.test(d.nodeName)) d = d.parentNode; "href" in d && (d.href.indexOf("http") || ~d.href.indexOf(e.host)) && (a.preventDefault(), e.href = d.href) }, !1) } })(document, window.navigator, "standalone")
+    </script>
+    <script>
+        // Storage lib
+        window.storage = (() => { var n = "localStorage" in window && !!window.localStorage; return { set: function (t, e) { return n ? (e = e instanceof String ? e : JSON.stringify(e), window.localStorage.setItem(t, e)) : null }, get: function (t) { if (n) { var e = window.localStorage.getItem(t); try { return JSON.parse(e) } catch (t) { return e } } return null }, remove: function (t) { n && window.localStorage.removeItem(t) }, clear: function () { n && window.localStorage.clear() } } })();
+    </script>
+    <!-- Mobile IE allows us to activate ClearType technology for smoothing fonts for easy reading -->
+    <meta http-equiv="cleartype" content="on">
+    <!-- Application styles. -->
+    <style type="text/css">
+        /*<%CSS%>*/
+    </style>
+</head>
+
+<body class="no-select">
+    <div class="hide" id="relaunch-label" style="color:#333;padding:2rem;text-align:center;font-size:2rem;">Please re-launch the app.</div>
+    <main>
+        <!-- Confirm dialog -->
+        <cf-confirm-dialog></cf-confirm-dialog>
+
+        <dm-main-input></dm-main-input>
+        <dm-tally></dm-tally>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            /*<%JS%>*/
+        });     
+    </script>
+</body>
+
+</html>

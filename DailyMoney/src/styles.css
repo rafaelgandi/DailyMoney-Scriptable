@@ -1,0 +1,340 @@
+:root {
+    /* --global-bgcolor: #E5DEE0; */
+    --global-bgcolor: #E2E2E2;
+    --default-fontcolor: #2F3437;
+    --lighter-fontcolor: #a3a2a2;
+    --default-padding: 1rem;
+    --rounded-fontfamily: ArialRoundedMTBold, sans-serif;
+    --default-fontfamily: Cochin, -apple-system, BlinkMacSystemFont, sans-serif;
+    
+    --rounded: 1.1rem;
+    --ui-red: #FF5D4D;
+    --ui-green: #46C35B;
+    --ui-blue: #5EB0D7;
+    --outline-test: 1px solid red;
+}
+
+html { font-size: 16px; }
+*, *::after, *::before { box-sizing: border-box; }
+body {
+    font-family: var(--default-fontfamily);
+    height: 100%;
+    color: var(--default-fontcolor);
+    position: relative;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    background-color: var(--global-bgcolor);
+}
+
+main {
+    min-height: 100vh;
+    padding: var(--default-padding);
+    position: relative;
+    padding-top: 0;
+}
+.hide { display: none !important; }
+
+h1, h2, h3 {
+    font-family: var(--default-fontfamily);
+}
+
+blockquote {
+    display: block;
+    font-size: 1.2rem;
+    font-style: italic;
+    text-align: center;
+    transition: transform 1s ease-out, opacity .5s linear;
+    opacity: 0;
+    transform: scale(.5);
+}
+
+blockquote.show {
+    opacity: 1;
+    transform: translateY(-50px) scale(1);
+}
+
+.blur {
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(10px);
+}
+
+.sml-shadow {
+    box-shadow: 2px 3px 6px 0px rgba(71, 71, 71, 0.5);
+}
+
+.no-show {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.no-select {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    user-select: none;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.page {
+    /* outline: 1px solid yellow; */
+    padding: 0;
+    margin: 0;
+    /* margin-top: 3rem;
+    padding-top: 2rem; */
+    transition: opacity .4s ease;
+    opacity: 1;
+    height: 100vh;
+}
+
+.page--hide {
+    opacity: 0 !important;
+    transform: scale(0);
+    position: fixed;
+    top: -9999px;
+}
+
+
+.input-sec {
+    padding: var(--default-padding);
+    /* outline: var(--outline-test) */
+    transition: transform .3s ease-out, opacity .3s ease-out;
+    opacity: 1;
+}
+
+.input-sec__totals-con,
+.tally-sec__totals-con  {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    font-size: 1.3rem;
+}
+
+.tally-sec__totals-con {
+    margin-top: calc(var(--default-padding) + 1rem);
+}
+
+.input-sec__income-total,
+.input-sec__expense-total,
+.tally-sec__income-total,
+.tally-sec__expense-total {
+    padding: .3rem;
+}
+
+.input-sec__income-total,
+.tally-sec__income-total {
+    border-right: 1px solid var(--lighter-fontcolor);
+    text-align: right;
+    color: var(--ui-green);
+}
+.input-sec__expense-total,
+.tally-sec__expense-total {
+    color: var(--ui-red);
+}
+
+#input-sec__input {
+    display: block;
+    text-align: center;
+    padding: var(--default-padding);
+    font-size: 5rem;
+    background-color: transparent;
+    border: 0;
+    outline: none;
+    width: 100%;
+    font-family: var(--default-fontfamily);
+    color: var(--default-fontcolor);
+}
+
+.input-sec__button-con {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.input-sec__button-con button {
+    font-family: var(--default-fontfamily);
+    padding: .5rem;
+    font-size: 1.5rem;
+    border-radius: 5px;
+}
+.input-sec__button-con button b {
+    font-weight: normal;
+    position: relative;
+    top: -4px;
+}
+#income-button {
+    border: 1px solid var(--ui-green);
+    color: var(--ui-green);
+    background-color: #CAF6D1;
+}
+#expense-button {
+    border: 1px solid var(--ui-red);
+    color: var(--ui-red);
+    background-color: #FFD1CD;
+}
+
+/* ========= */
+
+.tally-sec {
+    margin-top: var(--default-padding);
+    padding: var(--default-padding);
+    transition: transform .3s ease-out;
+}
+
+
+.tally-sec__con {
+    border: 1px solid var(--lighter-fontcolor);
+    border-radius: calc(var(--rounded) / 2);
+    position: relative;
+    --label-size: 1.2rem;
+    margin-top: 2rem;
+    min-height: 5rem;
+    background-color: var(--global-bgcolor);
+    transition: transform .3s ease-in;
+}
+
+.tally-sec__con--prev-dates {
+    transform: scale(.9);
+}
+
+.tally-sec label {
+    position: absolute;
+    top: -12px;
+    left: 23px;
+    display: inline-block;
+    padding: 0 .5rem;
+    background: var(--global-bgcolor);
+    font-weight: 800;
+    font-size: var(--label-size);
+}
+.tally-sec__delete-button {
+    background: transparent;
+    border: 0;
+    display: block;
+    color: var(--ui-red);
+    width: 100%;
+    padding: var(--default-padding);
+    /* padding-top: calc(var(--default-padding) / 5); */
+    padding-top: 0;
+    font-family: var(--default-fontfamily);
+    font-size: var(--label-size);
+}
+
+.tally-sec__item-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: .4rem;
+}
+
+.tally-sec__con--today .tally-sec__item-list {
+    padding-top: var(--default-padding);
+}
+
+.tally-sec__item-list li {
+    --item-list-font-size: 1.1rem;
+    padding: calc(var(--default-padding) / 3);
+    font-size: var(--item-list-font-size);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: .5rem;
+}
+
+.tally-sec__item-list li time {
+    opacity: 0.8;
+}
+.tally-sec__item-list li i {
+    font-style: normal;
+}
+
+.tally-sec__delete-item-button {
+    background: transparent;
+    border:0;
+    position: relative;
+    top: -4px;
+    font-size: var(--item-list-font-size);
+
+}
+
+
+
+.dialog {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    /* background-color: rgba(43, 43, 43, 0.5); */
+    background-color: rgba(36, 31, 31, 0.5);
+    z-index: 9999;
+    border-radius: var(--rounded);
+}
+
+.dialog-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 100vh;
+    background-color: rgba(31, 29, 29, 0.5);
+    /* opacity: 0.5; */
+    z-index: 888;
+}
+
+#confirm-dialog {
+    bottom: 2rem;
+    padding: 0;
+}
+#confirm-dialog button {
+    display: block;
+    width: 100%;
+    padding: var(--default-padding);
+    border: 0;
+    background-color: transparent;
+    font-size: 1.2rem;
+}
+.confirm-dialog__action {
+    color: var(--ui-red);
+    border-bottom: 1px solid var(--dark-fontcolor) !important;
+}
+.confirm-dialog__cancel {
+    color: var(--ui-blue);
+}
+
+.is-expense {
+    color: var(--ui-red);
+}
+
+.is-expense::before {
+    content: '-';
+}
+
+.is-income {
+    color: var(--ui-green);
+}
+
+#hooray-empty {
+    text-align: center;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    /* outline: var(--outline-test); */
+}
+
+#hooray-empty span {
+    font-size: 3rem;
+    opacity: 0.3;
+}
+
+dm-tally {
+    display: block;
+    height: 59vh;
+    /* outline: 1px solid red; */
+    overflow-y: scroll;
+}
